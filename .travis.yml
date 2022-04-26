@@ -1,0 +1,21 @@
+language: generic
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t pablomdz/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  -  docker run -e CI=true pablomdz/react-test npm  test
+
+after_success:
+  - docker build -t pablomdz/multi-client ./client
+  - docker build -t pablomdz/multi-nginx ./nginx
+  - docker build -t pablomdz/multi-server ./server
+  - docker build -t pablomdz/multi-worker ./worker
+  - echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push pablomdz/multi-client
+  - docker push pablomdz/multi-nginx
+  - docker push pablomdz/multi-server
+  - docker push pablomdz/multi-worker
