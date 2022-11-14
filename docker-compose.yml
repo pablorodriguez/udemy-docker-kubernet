@@ -6,6 +6,8 @@ services:
       - POSTGRES_PASSWORD=postgres_password
   redis:
     image: 'redis:latest'
+    ports:
+      - "6379:6379"
   nginx:
     depends_on:
       - api
